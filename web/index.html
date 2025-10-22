@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
+<!DOCTYPE html><html><head>
   <!--
     If you are serving your web app in a path other than the root, change the
     href value below to reflect the base path you are serving from.
@@ -27,12 +25,111 @@
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="icon" type="image/png" href="favicon.png">
 
   <title>mobil_muska</title>
   <link rel="manifest" href="manifest.json">
+  
+  
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+  
+  <style>
+    /* Web Splash Screen - Mobile ile aynı tasarım */
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #166b5d;
+      overflow: hidden;
+    }
+    
+    #web-splash-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background-color: #166b5d;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.3s ease-out;
+    }
+    
+    #web-splash-screen.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .splash-logo {
+      width: 150px;
+      height: 150px;
+      object-fit: contain;
+      border-radius: 50%;
+    }
+    
+    @media (max-width: 768px) {
+      .splash-logo {
+        width: 120px;
+        height: 120px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .splash-logo {
+        width: 100px;
+        height: 100px;
+      }
+    }
+  </style>
+
+  
+
 </head>
 <body>
-  <script src="flutter_bootstrap.js" async></script>
-</body>
-</html>
+  <!-- Web Splash Screen - Mobil ile aynı tasarım -->
+  <div id="web-splash-screen">
+    <img class="splash-logo" src="assets/splash_logo.png" alt="Mobil Muska">
+  </div>
+
+  <script>
+    // Flutter yüklendikten sonra splash screen'i kaldır
+    let splashRemoved = false;
+    
+    function removeSplash() {
+      if (splashRemoved) return;
+      splashRemoved = true;
+      
+      const splashScreen = document.getElementById('web-splash-screen');
+      if (splashScreen) {
+        splashScreen.classList.add('fade-out');
+        setTimeout(() => {
+          splashScreen.remove();
+          // Body background'unu Flutter app göründükten sonra temizle
+          setTimeout(() => {
+            document.body.style.backgroundColor = 'transparent';
+          }, 500);
+        }, 300);
+      }
+    }
+    
+    // Flutter tamamen yüklendikten sonra splash screen'i kaldır
+    window.addEventListener('flutter-first-frame', function() {
+      // Biraz ekstra bekle ki Flutter tamamen render olsun
+      setTimeout(removeSplash, 200);
+    });
+    
+    // Fallback: Maximum 5 saniye sonra splash screen'i kaldır
+    setTimeout(() => {
+      removeSplash();
+    }, 5000);
+  </script>  
+  
+  
+  
+  
+  
+  <script src="flutter_bootstrap.js" async=""></script>
+
+
+</body></html>
