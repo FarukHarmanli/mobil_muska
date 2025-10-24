@@ -8,6 +8,7 @@ class TopMenu extends StatefulWidget {
     super.key,
     this.imagePaths = const [
       'assets/images/app-sub-panel-extend.png',
+
       // diğer png'ler...
     ],
     this.minVisibleCount = 4,
@@ -132,11 +133,11 @@ class _TopMenuState extends State<TopMenu> {
           height: panelHeight,
           margin: const EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.25),
+            color: Colors.white.withValues(alpha: 0.25),
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.18),
+                color: Colors.black.withValues(alpha: 0.25),
                 blurRadius: 10,
                 offset: const Offset(0, 6),
               ),
@@ -157,7 +158,7 @@ class _TopMenuState extends State<TopMenu> {
                       parent: AlwaysScrollableScrollPhysics(),
                     ),
                     itemCount: widget.imagePaths.length,
-                    separatorBuilder: (_, __) =>
+                    separatorBuilder: (_, _) =>
                         SizedBox(width: widget.separator),
                     itemBuilder: (context, index) {
                       final g = (index < items.length)
@@ -174,7 +175,7 @@ class _TopMenuState extends State<TopMenu> {
                         child: Container(
                           width: g.boxW,
                           height: g.boxH,
-                          color: Colors.white.withOpacity(0.12),
+                          color: Colors.white.withValues(alpha: 0.12),
                           padding: EdgeInsets.all(widget.innerPadding),
                           alignment: Alignment.center,
                           child: SizedBox(
@@ -237,7 +238,7 @@ class _ItemGeometry {
 
 class _ArrowButton extends StatelessWidget {
   const _ArrowButton({
-    super.key,
+    // super.key,
     required this.enabled,
     required this.onTap,
     required this.isLeft,
@@ -260,7 +261,7 @@ class _ArrowButton extends StatelessWidget {
             width: 36,
             margin: const EdgeInsets.symmetric(vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.15),
+              color: Colors.black.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(10),
             ),
             alignment: Alignment.center,

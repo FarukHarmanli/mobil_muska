@@ -89,6 +89,8 @@ class SideMenu extends StatelessWidget {
               ),
               onTap: () => Navigator.pop(context),
             ),
+
+            // 🔒 ÇIKIŞ YAP
             ListTile(
               leading: const Icon(Icons.logout, color: Color(0xFF1A3A36)),
               title: const Text(
@@ -98,7 +100,22 @@ class SideMenu extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              onTap: () => Navigator.pop(context),
+              onTap: () async {
+                Navigator.pop(context); // menüyü kapat
+                await Future.delayed(const Duration(milliseconds: 200));
+
+                // örnek logout: token temizleme vs. eklenebilir
+                debugPrint('User logged out.');
+
+                // login ekranına yönlendir
+                if (context.mounted) {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/login',
+                    (route) => false, // tüm geçmişi temizle
+                  );
+                }
+              },
             ),
           ],
         ),

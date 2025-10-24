@@ -16,7 +16,7 @@ class MainApp extends StatelessWidget {
       title: 'Mobil Muska',
       theme: buildAppTheme(),
       onGenerateRoute: AppRouter.onGenerateRoute,
-      initialRoute: AppRouter.home,
+      initialRoute: AppRouter.login,
     );
   }
 }
