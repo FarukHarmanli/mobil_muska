@@ -1,6 +1,7 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
 import 'widgets/side_menu.dart';
+import 'widgets/top_menu.dart'; // <-- top menu içeriği (renk/top_menu.dart'ta)
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,19 +26,53 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  // Panel ölçüleri (istersen const yapabilirsin)
+  // Panel ölçüleri
   static const double _topPanelHeight = 90;
   static const double _subPanelTop = 70;
   static const double _subPanelHeight = 80;
 
+  // --- TopMenu animasyon kontrolü
+  late final AnimationController _menuCtrl;
+  late final Animation<double> _menuSize;
+  bool _isMenuOpen = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _menuCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 260),
+    );
+    _menuSize = CurvedAnimation(
+      parent: _menuCtrl,
+      curve: Curves.easeInOutCubic,
+      reverseCurve: Curves.easeInOutCubic.flipped,
+    );
+  }
+
+  @override
+  void dispose() {
+    _menuCtrl.dispose();
+    super.dispose();
+  }
+
+  void _toggleTopMenu() {
+    setState(() {
+      _isMenuOpen = !_isMenuOpen;
+      if (_isMenuOpen) {
+        _menuCtrl.forward();
+      } else {
+        _menuCtrl.reverse();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Top panelin sub panel üzerine bindirme miktarı
     final double overlap = (_topPanelHeight - _subPanelTop).clamp(0, _subPanelHeight);
-    // Görünen alanın ortasına denk getirmek için içerik üstten yarım overlap kaydırılıyor
     final double contentTopPadding = overlap / 2 + 10;
 
     return Scaffold(
@@ -76,7 +111,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
                 child: Padding(
-                  // ikonları görünür alanın dikey ortasına taşır
                   padding: EdgeInsets.fromLTRB(24, contentTopPadding, 24, 0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -98,8 +132,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
 
-                      // Orta ikon (tek başına)
-                      Image.asset('assets/images/app-sub-panel-mid.png', height: 45),
+                      // Orta ikon (AÇ/KAPA TETİKLEYİCİSİ)
+                      GestureDetector(
+                        onTap: _toggleTopMenu,
+                        behavior: HitTestBehavior.opaque,
+                        child: Image.asset(
+                          'assets/images/app-sub-panel-mid.png',
+                          height: 45,
+                        ),
+                      ),
 
                       // Sağ: sayı + ikon
                       Row(
@@ -155,6 +196,31 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Image.asset('assets/images/app-hamburger-menu.png', height: 50),
                     ),
                   ],
+                ),
+              ),
+            ),
+
+            // --- Aşağı doğru kayan TopMenu (SUB PANELİN ALTINDA açılır)
+            Positioned(
+              // MENÜYÜ sub panelin altına koyuyoruz:
+              top: _subPanelTop + _subPanelHeight,
+              left: 0,
+              right: 0,
+              child: IgnorePointer(
+                // kapalıyken tıklamaları tamamen yok say
+                ignoring: !_isMenuOpen,
+                child: ClipRect(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 1), // küçük boşluk (isteğe bağlı)
+                      SizeTransition(
+                        sizeFactor: _menuSize,      // 0 -> 1
+                        axis: Axis.vertical,
+                        axisAlignment: -1.0,        // yukarıdan aşağı aç
+                        child: const TopMenu(),     // içeriğin rengini top_menu.dart'ta beyaza çekebilirsin
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
