@@ -1,4 +1,3 @@
-// lib/widgets/top_menu.dart
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
@@ -37,7 +36,7 @@ class _TopMenuState extends State<TopMenu> {
   void initState() {
     super.initState();
     _loadNaturalSizes();
-    _controller.addListener(() => setState(() {})); // okların aktifliğini güncelle
+    _controller.addListener(() => setState(() {}));
   }
 
   @override
@@ -94,14 +93,11 @@ class _TopMenuState extends State<TopMenu> {
 
         final panelHeight = tallestItemH + widget.outerPadding * 2;
 
-        // İçerik toplam genişliği (okları göstermek için)
         final singleItemW = (items.isNotEmpty ? items.first.boxW : targetBoxW);
         final contentW = (singleItemW * widget.imagePaths.length) +
             widget.separator * (widget.imagePaths.length - 1);
 
         final canScroll = contentW > (viewportW - widget.outerPadding * 2);
-
-        // Tek adımda kaydırılacak mesafe: 1 kart + ayırıcı
         final step = singleItemW + widget.separator;
 
         Future<void> goLeft() async {
@@ -253,7 +249,6 @@ class _ArrowButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // yarı saydam arka plan + büyük dokunma alanı
     return IgnorePointer(
       ignoring: !enabled,
       child: AnimatedOpacity(
