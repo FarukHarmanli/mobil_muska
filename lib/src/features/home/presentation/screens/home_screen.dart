@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/widgets/side_menu.dart';
 import '../../../../core/widgets/top_menu.dart';
+import '../../../../core/widgets/object_canvas.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -75,6 +76,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         ),
         child: Stack(
           children: [
+            // --- Object Canvas (arka plan)
+            Positioned(
+              top: _topPanelHeight + 20,
+              bottom: 100,
+              left: 20,
+              right: 20,
+              child: const ObjectCanvas(),
+            ),
+            
             // --- Sub Panel
             Positioned(
               top: _subPanelTop,

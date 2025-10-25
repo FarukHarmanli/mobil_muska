@@ -1,5 +1,5 @@
 name: mobil_muska
-description: "A new Flutter project."
+description: "Mobil Muska Uygulamasi"
 publish_to: 'none'
 version: 0.1.0
 
@@ -9,6 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  provider: ^6.1.2
 
 dev_dependencies:
   flutter_test:
@@ -22,6 +23,9 @@ flutter:
   
   assets:
     - assets/images/
+    - assets/data/objects.json
+    - assets/images/objects/
+    - assets/images/adornments/
 
 flutter_launcher_icons:
   android: true

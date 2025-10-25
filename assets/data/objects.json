@@ -1,0 +1,37 @@
+[
+  {
+    "id": "BlackMuska",
+    "name": "Siyah Muska",
+    "baseImagePath": "assets/images/objects/BlackMuska.png",
+    "canvasSize": { "w": 400, "h": 400 },
+    "unlocked": true,
+    "version": 1,
+    "adornments": [
+      {
+        "id": "Amulet",
+        "name": "Mavi Nazar Boncuğu",
+        "imagePath": "assets/images/adornments/Amulet.png",
+        "position": { "x": 200, "y": 150 },
+        "anchor": { "x": 0.5, "y": 0.5 },
+        "size": { "w": 64, "h": 64 },
+        "scale": 1.0,
+        "rotationDeg": 0.0,
+        "opacity": 1.0,
+        "zIndex": 1,
+        "isVisible": true
+      },
+      {
+        "id": "LeftFeather",
+        "name": "Sol Çaput",
+        "imagePath": "assets/images/adornments/LeftFeather.png",
+        "position": { "x": 300, "y": 320 },
+        "anchor": { "x": 0.5, "y": 0.5 },
+        "scale": 1.2,
+        "rotationDeg": 15,
+        "opacity": 0.95,
+        "zIndex": 2,
+        "isVisible": true
+      }
+    ]
+  }
+]
