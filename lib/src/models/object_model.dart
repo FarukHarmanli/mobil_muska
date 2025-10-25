@@ -7,6 +7,12 @@ class AppObject {
   final String name;
   final String baseImagePath;
   final Size? canvasSize;
+
+  // 🔹 Base (muska) için yeni alanlar
+  final Size? baseSize;           // px
+  final Offset? basePosition;     // canvas koordinatı (px)
+  final Offset? baseAnchor;       // 0..1
+
   final List<Adornment> adornments;
   final bool unlocked;
   final int version;
@@ -16,6 +22,9 @@ class AppObject {
     required this.name,
     required this.baseImagePath,
     this.canvasSize,
+    this.baseSize,
+    this.basePosition,
+    this.baseAnchor,
     this.adornments = const [],
     this.unlocked = false,
     this.version = 1,
@@ -26,6 +35,9 @@ class AppObject {
     String? name,
     String? baseImagePath,
     Size? canvasSize,
+    Size? baseSize,
+    Offset? basePosition,
+    Offset? baseAnchor,
     List<Adornment>? adornments,
     bool? unlocked,
     int? version,
@@ -35,6 +47,9 @@ class AppObject {
       name: name ?? this.name,
       baseImagePath: baseImagePath ?? this.baseImagePath,
       canvasSize: canvasSize ?? this.canvasSize,
+      baseSize: baseSize ?? this.baseSize,
+      basePosition: basePosition ?? this.basePosition,
+      baseAnchor: baseAnchor ?? this.baseAnchor,
       adornments: adornments ?? this.adornments,
       unlocked: unlocked ?? this.unlocked,
       version: version ?? this.version,
@@ -46,6 +61,9 @@ class AppObject {
         name: json['name'] as String,
         baseImagePath: json['baseImagePath'] as String,
         canvasSize: sizeFromJson(json['canvasSize']),
+        baseSize: sizeFromJson(json['baseSize']),
+        basePosition: offsetFromJson(json['basePosition']),
+        baseAnchor: offsetFromJson(json['baseAnchor']),
         adornments: (json['adornments'] as List<dynamic>? ?? [])
             .map((e) => Adornment.fromJson(e as Map<String, dynamic>))
             .toList(),
@@ -58,6 +76,9 @@ class AppObject {
         'name': name,
         'baseImagePath': baseImagePath,
         'canvasSize': sizeToJson(canvasSize),
+        'baseSize': sizeToJson(baseSize),
+        'basePosition': offsetToJson(basePosition),
+        'baseAnchor': offsetToJson(baseAnchor),
         'adornments': adornments.map((e) => e.toJson()).toList(),
         'unlocked': unlocked,
         'version': version,

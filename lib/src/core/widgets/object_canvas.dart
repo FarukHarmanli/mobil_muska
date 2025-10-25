@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/object_model.dart';
@@ -9,86 +10,112 @@ class ObjectCanvas extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<ObjectProvider>(
-      builder: (context, provider, child) {
-        final activeObject = provider.activeObject;
-        
-        if (activeObject == null) {
-          return const Center(
-            child: Text(
-              'Hiç obje yüklenmedi',
-              style: TextStyle(
-                color: Colors.white70,
-                fontSize: 16,
-              ),
-            ),
-          );
-        }
+      builder: (context, provider, _) {
+        final AppObject? obj = provider.activeObject;
+        if (obj == null) return const SizedBox.shrink();
 
-        final canvasSize = activeObject.canvasSize ?? const Size(400, 400);
-        
-        return Center(
-          child: Container(
-            width: canvasSize.width,
-            height: canvasSize.height,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.2),
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Stack(
-                children: [
-                  // Ana obje görseli
-                  Image.asset(
-                    activeObject.baseImagePath,
-                    width: canvasSize.width,
-                    height: canvasSize.height,
-                    fit: BoxFit.contain,
+        return LayoutBuilder(
+          builder: (context, c) {
+            final baseW = obj.canvasSize?.width ?? c.maxWidth;
+            final baseH = obj.canvasSize?.height ?? c.maxHeight;
+
+            final sW = c.maxWidth / baseW;
+            final sH = c.maxHeight / baseH;
+            final s = math.min(sW, sH);
+
+            final canvasW = baseW * s;
+            final canvasH = baseH * s;
+
+            final adorns = [...obj.adornments.where((a) => a.isVisible)]
+              ..sort((a, b) => a.zIndex.compareTo(b.zIndex));
+
+            return Center(
+              child: RepaintBoundary(
+                child: SizedBox(
+                  width: canvasW,
+                  height: canvasH,
+                  child: Stack(
+                    clipBehavior: Clip.none, // overflow serbest
+                    children: [
+                      _buildBase(obj, s),
+                      ...adorns.map((a) => _adornment(a, s)),
+                    ],
                   ),
-                  
-                  // Süslemeler
-                  ...activeObject.adornments
-                      .where((adornment) => adornment.isVisible)
-                      .map((adornment) => _buildAdornment(adornment))
-                      .toList(),
-                ],
+                ),
               ),
-            ),
-          ),
+            );
+          },
         );
       },
     );
   }
 
-  Widget _buildAdornment(Adornment adornment) {
-    final adornmentSize = adornment.size ?? const Size(64, 64);
-    
-    return Positioned(
-      left: adornment.position.dx - (adornmentSize.width * adornment.anchor.dx),
-      top: adornment.position.dy - (adornmentSize.height * adornment.anchor.dy),
-      child: Transform.scale(
-        scale: adornment.scale,
-        child: Transform.rotate(
-          angle: adornment.rotationDeg * (3.14159 / 180), // Convert to radians
-          child: Opacity(
-            opacity: adornment.opacity,
-            child: SizedBox(
-              width: adornmentSize.width,
-              height: adornmentSize.height,
-              child: Image.asset(
-                adornment.imagePath,
-                fit: BoxFit.contain,
-              ),
-            ),
+  Widget _buildBase(AppObject obj, double s) {
+    // baseSize/basePosition/baseAnchor varsa piksel hassas yerleşim
+    if (obj.baseSize != null && obj.basePosition != null && obj.baseAnchor != null) {
+      final bw = obj.baseSize!.width * s;
+      final bh = obj.baseSize!.height * s;
+
+      final bx = obj.basePosition!.dx * s;
+      final by = obj.basePosition!.dy * s;
+
+      final bax = obj.baseAnchor!.dx;
+      final bay = obj.baseAnchor!.dy;
+
+      return Transform.translate(
+        offset: Offset(bx - bw * bax, by - bh * bay),
+        child: SizedBox(
+          width: bw,
+          height: bh,
+          child: Image.asset(
+            obj.baseImagePath,
+            fit: BoxFit.contain,
           ),
         ),
+      );
+    }
+
+    // yoksa tüm alanı kapla
+    return Positioned.fill(
+      child: Image.asset(
+        obj.baseImagePath,
+        fit: BoxFit.contain,
       ),
+    );
+  }
+
+  Widget _adornment(Adornment a, double s) {
+    final aw = (a.size?.width ?? 64) * s;
+    final ah = (a.size?.height ?? 64) * s;
+
+    final px = a.position.dx * s;
+    final py = a.position.dy * s;
+
+    final ax = a.anchor.dx;
+    final ay = a.anchor.dy;
+
+    Widget child = SizedBox(
+      width: aw,
+      height: ah,
+      child: Image.asset(
+        a.imagePath,
+        fit: BoxFit.contain,
+      ),
+    );
+
+    if (a.scale != 1.0) child = Transform.scale(scale: a.scale, child: child);
+    if (a.rotationDeg != 0) {
+      child = Transform.rotate(
+        angle: a.rotationDeg * math.pi / 180,
+        child: child,
+      );
+    }
+    if (a.opacity != 1.0) child = Opacity(opacity: a.opacity, child: child);
+
+    // Transform.translate ile clip’e takılmadan konumlandır
+    return Transform.translate(
+      offset: Offset(px - aw * ax, py - ah * ay),
+      child: child,
     );
   }
 }
